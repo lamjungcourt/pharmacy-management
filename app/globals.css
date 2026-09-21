@@ -1,0 +1,90 @@
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#182230}.shell{display:flex;min-height:100vh}aside{width:235px;background:#10233f;color:white;padding:22px;position:fixed;height:100vh}aside h2{margin:0 0 25px}nav{display:flex;flex-direction:column;gap:5px}nav a{color:#dbe7f8;text-decoration:none;padding:11px 12px;border-radius:8px}nav a:hover{background:#1d3a61}main{margin-left:235px;width:calc(100% - 235px)}header{height:64px;background:white;border-bottom:1px solid #e4e8ef;padding:0 28px;display:flex;align-items:center;justify-content:space-between}section{padding:28px}h1{margin-top:0}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card,.panel{background:white;border:1px solid #e5e9f0;border-radius:12px;padding:18px;box-shadow:0 2px 8px #00000008}.card{display:flex;flex-direction:column;gap:7px}.card span{font-size:25px}.card small{color:#667085}.card strong{font-size:23px}.panel{margin-top:20px;overflow:auto}input,button{font:inherit;border:1px solid #ccd4df;border-radius:7px;padding:10px}input{width:100%}button{background:#1769e0;color:white;border:0;cursor:pointer;font-weight:600}button:disabled{opacity:.5}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:15px}.grid button{grid-column:span 4}.grid input{min-width:0}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid #edf0f4;white-space:nowrap}.pos{display:grid;grid-template-columns:1fr 2fr;gap:18px}.suggest{display:block;width:100%;text-align:left;background:white;color:#182230;border:1px solid #e5e9f0;margin-top:5px}.suggest:hover{background:#eef5ff}.qty{width:75px}.totals{margin-left:auto;max-width:350px;text-align:right}.form{max-width:650px;display:grid;gap:14px}.form label{display:grid;gap:6px;font-weight:600}.form label input[type=checkbox]{width:auto} @media(max-width:900px){aside{width:70px;padding:12px}aside h2{font-size:0}aside h2:first-letter{font-size:24px}nav a{font-size:0}nav a:before{content:"•";font-size:20px}main{margin-left:70px;width:calc(100% - 70px)}.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr 1fr}.grid button{grid-column:span 2}.pos{grid-template-columns:1fr}}@media(max-width:550px){.cards{grid-template-columns:1fr}section{padding:15px}}
+/* ---- Header / user box ---- */
+header b{font-size:15px}
+.userbox{display:flex;align-items:center;gap:14px}
+.who{color:#475467;font-size:14px}
+.who em{color:#98a2b3;font-style:normal}
+.logoutBtn{background:#f2f4f7;color:#344054;border:1px solid #d0d5dd;padding:8px 14px}
+.logoutBtn:hover{background:#e4e7ec}
+.navicon{margin-right:10px}
+nav a{display:flex;align-items:center}
+
+/* ---- Buttons ---- */
+.ghost{background:white;color:#1769e0;border:1px solid #c7d7f5}
+.ghost:hover{background:#eef5ff}
+.ghost.danger{color:#b42318;border-color:#fda29b}
+.ghost.danger:hover{background:#fef3f2}
+.rowActions{display:flex;gap:8px;white-space:nowrap}
+.rowActions button{padding:7px 10px;font-size:13px}
+.formActions{display:flex;gap:10px;margin-top:12px}
+.formActions button{width:auto}
+
+/* ---- Notices ---- */
+.notice{background:#eef5ff;color:#1769e0;border:1px solid #c7d7f5;border-radius:8px;padding:10px 14px;margin-top:10px}
+.notice.error{background:#fef3f2;color:#b42318;border-color:#fda29b}
+
+/* ---- Filter chips (Stock page) ---- */
+.filterRow{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+.chip{background:white;color:#344054;border:1px solid #d0d5dd;padding:8px 14px;border-radius:999px;font-weight:500}
+.chip.active{background:#1769e0;color:white;border-color:#1769e0}
+
+/* ---- Bar chart (Reports page) ---- */
+.barChart{display:flex;flex-direction:column;gap:12px;margin-top:10px}
+.barRow{display:grid;grid-template-columns:180px 1fr 180px;align-items:center;gap:10px}
+.barLabel{font-size:14px;color:#344054;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.barTrack{background:#eef1f5;border-radius:6px;height:14px;overflow:hidden}
+.barFill{background:linear-gradient(90deg,#1769e0,#3b8bf0);height:100%;border-radius:6px}
+.barValue{font-size:13px;color:#667085;text-align:right;white-space:nowrap}
+
+/* ---- Login page ---- */
+.loginPage{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at top,#132b52,#0b1a30 60%)}
+.loginCard{background:white;border-radius:16px;padding:40px 36px;width:360px;box-shadow:0 20px 50px #00000033;display:flex;flex-direction:column;gap:16px}
+.loginBrand{text-align:center;margin-bottom:6px}
+.loginLogo{font-size:40px}
+.loginBrand h1{font-size:20px;margin:8px 0 2px}
+.loginBrand p{color:#667085;margin:0;font-size:14px}
+.loginCard label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px;color:#344054}
+.loginError{background:#fef3f2;color:#b42318;border:1px solid #fda29b;border-radius:8px;padding:10px;font-size:14px;margin:0}
+.loginHint{font-size:12px;color:#98a2b3;text-align:center;margin:4px 0 0}
+
+/* ---- Pharmacy Profile ---- */
+.profileHeader{display:flex;align-items:center;gap:22px}
+.logoDrop{width:96px;height:96px;flex:0 0 96px;border:2px dashed #c7d7f5;border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;background:#f7faff}
+.logoDrop:hover{background:#eef5ff;border-color:#1769e0}
+.logoDrop img{width:100%;height:100%;object-fit:contain;background:white}
+.logoDropHint{font-size:12px;text-align:center;color:#667085;line-height:1.5}
+.profileHeaderInfo h2{margin:0 0 4px}
+.profileHeaderInfo p{margin:0 0 10px;color:#667085;font-size:14px}
+.profileHeaderInfo .formActions{margin-top:0}
+.invoiceLogo{max-width:110px;max-height:70px;object-fit:contain;margin-bottom:8px}
+
+/* ---- Printable invoice ---- */
+.printLink{display:inline-block;margin-top:10px;color:#1769e0;font-weight:600;text-decoration:none}
+.invoiceWrap{max-width:720px;margin:0 auto}
+.invoiceToolbar{display:flex;gap:10px;justify-content:flex-end;margin-bottom:14px}
+.invoiceToolbar button{width:auto}
+.invoice{background:white;border:1px solid #e5e9f0;border-radius:12px;padding:32px}
+.invoiceHead{display:flex;justify-content:space-between;border-bottom:2px solid #10233f;padding-bottom:16px;margin-bottom:16px}
+.invoiceHead h1{font-size:20px;margin:0 0 4px}
+.invoiceHead p{margin:2px 0;font-size:13px;color:#475467}
+.invoiceMeta{text-align:right}
+.invoiceMeta h2{margin:0 0 6px;font-size:18px}
+.invoiceMeta p{margin:2px 0;font-size:13px}
+.invoiceTotals{margin-left:auto;max-width:280px;text-align:right;margin-top:16px}
+.invoiceTotals p{margin:4px 0;font-size:14px}
+.invoiceTotals h2{margin:8px 0;font-size:20px}
+.invoiceFooter{text-align:center;color:#98a2b3;font-size:13px;margin-top:24px;border-top:1px dashed #e5e9f0;padding-top:12px}
+.appFooter{text-align:center;color:#98a2b3;font-size:12px;padding:16px 12px;margin-top:auto}
+.dashboardBrand{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.dashboardBrand img{width:64px;height:64px;object-fit:contain;border-radius:12px;background:white;border:1px solid #e5e9f0;padding:4px}
+.dashboardBrandFallback{width:64px;height:64px;flex:0 0 64px;border-radius:12px;background:#f7faff;border:1px solid #e5e9f0;display:flex;align-items:center;justify-content:center;font-size:30px}
+.dashboardBrand h1{margin:0}
+.dashboardBrandPhone{margin:4px 0 0;color:#667085;font-size:14px}
+
+@media print{
+  .noprint,aside,header{display:none!important}
+  main{margin-left:0!important;width:100%!important}
+  body{background:white}
+  section{padding:0}
+  .invoice{border:none;box-shadow:none;padding:0}
+}
