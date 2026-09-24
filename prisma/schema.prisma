@@ -1,0 +1,233 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+
+enum Role { ADMIN CASHIER }
+enum PaymentMethod { CASH CARD BANK WALLET }
+enum StockType { PURCHASE SALE RETURN ADJUSTMENT PURCHASE_RETURN }
+
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  username String @unique
+  passwordHash String
+  role Role @default(CASHIER)
+  // Per-user access rights, e.g. {"medicines":["view","add"],"profit":["view"]}. Ignored for ADMIN (always full access).
+  // NULL = account predates permissions -> gets the least-privilege default preset (see lib/permissions.ts).
+  permissions Json?
+  sales Sale[]
+  createdAt DateTime @default(now())
+}
+
+model ShopSettings {
+  id Int @id @default(1)
+  name String @default("My Pharmacy")
+  panVat String?
+  regNo String?
+  email String?
+  address String?
+  phone String?
+  logoUrl String?
+  allowExpiredSales Boolean @default(false)
+  vatRate Float @default(0)
+}
+
+model Medicine {
+  id Int @id @default(autoincrement())
+  name String
+  genericName String?
+  manufacturer String?
+  category String?
+  unit String @default("unit")
+  sku String @unique
+  minStock Int @default(0)
+  createdAt DateTime @default(now())
+  batches MedicineBatch[]
+  saleItems SaleItem[]
+  purchaseItems PurchaseItem[]
+  purchaseReturnItems PurchaseReturnItem[]
+}
+
+model MedicineBatch {
+  id Int @id @default(autoincrement())
+  medicineId Int
+  batchNumber String
+  purchaseRate Float
+  sellingRate Float
+  quantity Int @default(0)
+  freeQuantity Int @default(0)
+  expiryDate DateTime
+  supplierId Int?
+  medicine Medicine @relation(fields:[medicineId], references:[id], onDelete: Cascade)
+  supplier Supplier? @relation(fields:[supplierId], references:[id], onDelete: SetNull)
+  stockTransactions StockTransaction[]
+  saleItems SaleItem[]
+  purchaseItems PurchaseItem[]
+  purchaseReturnItems PurchaseReturnItem[]
+  @@unique([medicineId,batchNumber])
+}
+
+model Supplier {
+  id Int @id @default(autoincrement())
+  name String
+  company String?
+  phone String?
+  address String?
+  panVat String?
+  email String?
+  notes String?
+  dueAmount Float @default(0)
+  batches MedicineBatch[]
+  purchases Purchase[]
+  payments SupplierPayment[]
+  purchaseReturns PurchaseReturn[]
+}
+
+model Customer {
+  id Int @id @default(autoincrement())
+  name String
+  phone String?
+  address String?
+  panVat String?
+  dueAmount Float @default(0)
+  sales Sale[]
+  payments CustomerPayment[]
+}
+
+model SupplierPayment {
+  id Int @id @default(autoincrement())
+  supplierId Int
+  purchaseId Int?
+  amount Float
+  receiptNo String?
+  note String?
+  paidDate DateTime @default(now())
+  supplier Supplier @relation(fields:[supplierId], references:[id], onDelete:Cascade)
+  purchase Purchase? @relation(fields:[purchaseId], references:[id], onDelete:SetNull)
+}
+
+model CustomerPayment {
+  id Int @id @default(autoincrement())
+  customerId Int
+  saleId Int?
+  amount Float
+  note String?
+  paidDate DateTime @default(now())
+  customer Customer @relation(fields:[customerId], references:[id], onDelete:Cascade)
+  sale Sale? @relation(fields:[saleId], references:[id], onDelete:SetNull)
+}
+
+model Purchase {
+  id Int @id @default(autoincrement())
+  supplierId Int?
+  purchaseDate DateTime @default(now())
+  totalAmount Float
+  discount Float @default(0)
+  vatAmount Float @default(0)
+  netAmount Float @default(0)
+  paidAmount Float @default(0)
+  supplier Supplier? @relation(fields:[supplierId], references:[id], onDelete:SetNull)
+  items PurchaseItem[]
+  payments SupplierPayment[]
+}
+
+model PurchaseReturn {
+  id Int @id @default(autoincrement())
+  supplierId Int?
+  returnDate DateTime @default(now())
+  reason String?
+  totalAmount Float
+  supplier Supplier? @relation(fields:[supplierId], references:[id], onDelete:SetNull)
+  items PurchaseReturnItem[]
+}
+
+model PurchaseReturnItem {
+  id Int @id @default(autoincrement())
+  returnId Int
+  medicineId Int
+  batchId Int
+  quantity Int
+  purchaseRate Float
+  amount Float
+  return PurchaseReturn @relation(fields:[returnId], references:[id], onDelete:Cascade)
+  medicine Medicine @relation(fields:[medicineId], references:[id])
+  batch MedicineBatch @relation(fields:[batchId], references:[id])
+}
+
+model PurchaseItem {
+  id Int @id @default(autoincrement())
+  purchaseId Int
+  medicineId Int
+  batchId Int
+  quantity Int
+  freeQuantity Int @default(0)
+  purchaseRate Float
+  sellingRate Float @default(0)
+  amount Float @default(0)
+  purchase Purchase @relation(fields:[purchaseId], references:[id], onDelete:Cascade)
+  medicine Medicine @relation(fields:[medicineId], references:[id])
+  batch MedicineBatch @relation(fields:[batchId], references:[id])
+}
+
+model Sale {
+  id Int @id @default(autoincrement())
+  invoiceNo String @unique
+  saleDate DateTime @default(now())
+  customerId Int?
+  cashierId Int
+  subtotal Float
+  discount Float @default(0)
+  tax Float @default(0)
+  total Float
+  paid Float
+  change Float
+  paymentMethod PaymentMethod
+  cancelled Boolean @default(false)
+  customer Customer? @relation(fields:[customerId], references:[id], onDelete:SetNull)
+  cashier User @relation(fields:[cashierId], references:[id])
+  items SaleItem[]
+  payments CustomerPayment[]
+}
+
+model SaleItem {
+  id Int @id @default(autoincrement())
+  saleId Int
+  medicineId Int
+  batchId Int
+  quantity Int
+  sellingRate Float
+  purchaseRate Float
+  amount Float
+  sale Sale @relation(fields:[saleId], references:[id], onDelete:Cascade)
+  medicine Medicine @relation(fields:[medicineId], references:[id])
+  batch MedicineBatch @relation(fields:[batchId], references:[id])
+}
+
+model Return {
+  id Int @id @default(autoincrement())
+  saleId Int
+  returnDate DateTime @default(now())
+  reason String?
+  totalAmount Float
+  items ReturnItem[]
+  sale Sale @relation(fields:[saleId], references:[id])
+}
+
+model ReturnItem {
+  id Int @id @default(autoincrement())
+  returnId Int
+  saleItemId Int
+  quantity Int
+  amount Float
+  return Return @relation(fields:[returnId], references:[id], onDelete:Cascade)
+  saleItem SaleItem @relation(fields:[saleItemId], references:[id])
+}
+
+model StockTransaction {
+  id Int @id @default(autoincrement())
+  batchId Int
+  type StockType
+  quantity Int
+  reference String?
+  createdAt DateTime @default(now())
+  batch MedicineBatch @relation(fields:[batchId], references:[id], onDelete:Cascade)
+}
