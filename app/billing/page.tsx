@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n";
+import { usePermissions } from "@/components/PermissionsProvider";
 
 type Batch = { id: number; batchNumber: string; quantity: number; sellingRate: number; purchaseRate: number; expiryDate: string };
 type Medicine = { id: number; name: string; sku: string; batches: Batch[] };
@@ -9,6 +10,9 @@ type Customer = { id: number; name: string; phone?: string; address?: string };
 
 export default function Billing() {
   const { t, digits } = useLanguage();
+  const { can } = usePermissions();
+  const canSell = can("billing", "add");
+  const canAddCustomer = can("customers", "add");
   const [meds, setMeds] = useState<Medicine[]>([]);
   const [q, setQ] = useState("");
   const [cart, setCart] = useState<CartLine[]>([]);
@@ -22,10 +26,10 @@ export default function Billing() {
   const [lastSaleId, setLastSaleId] = useState<number | null>(null);
   const [vatRate, setVatRate] = useState(0);
 
-  const loadCustomers = () => fetch("/api/customers").then((r) => r.json()).then(setCustomers).catch(() => {});
+  const loadCustomers = () => fetch("/api/customers").then((r) => (r.ok ? r.json() : [])).then(setCustomers).catch(() => {});
 
   useEffect(() => {
-    fetch("/api/medicines?q=" + encodeURIComponent(q)).then((r) => r.json()).then(setMeds);
+    fetch("/api/medicines?q=" + encodeURIComponent(q)).then((r) => (r.ok ? r.json() : [])).then(setMeds);
   }, [q]);
 
   useEffect(() => {
@@ -153,7 +157,7 @@ export default function Billing() {
                   <option key={c.id} value={c.id}>{c.name}{c.phone ? ` (${c.phone})` : ""}</option>
                 ))}
               </select>
-              {!addingPatient ? (
+              {!canAddCustomer ? null : !addingPatient ? (
                 <button type="button" className="ghost" style={{ marginTop: 6 }} onClick={() => setAddingPatient(true)}>
                   {t("addPatient")}
                 </button>
@@ -194,7 +198,7 @@ export default function Billing() {
                   : `⚠️ ${t("creditDueNoCustomerPrefix")} Rs. ${digits(creditDue.toFixed(2))} ${t("creditDueNoCustomerSuffix")}`}
               </p>
             )}
-            <button onClick={sale} disabled={!cart.length || (creditDue > 0 && !customerId)}>{t("completeSale")}</button>
+            <button onClick={sale} disabled={!canSell || !cart.length || (creditDue > 0 && !customerId)}>{t("completeSale")}</button>
             {msg && <p className="notice">{msg}</p>}
             {lastSaleId && (
               <a className="printLink" href={`/billing/print/${lastSaleId}`} target="_blank" rel="noreferrer">
