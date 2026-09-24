@@ -1,9 +1,28 @@
-generator client { provider = "prisma-client-js" }
-datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+generator client {
+ provider = "prisma-client-js" 
+}
+datasource db {
+ provider = "postgresql"
+ url = env("DATABASE_URL") 
+}
 
-enum Role { ADMIN CASHIER }
-enum PaymentMethod { CASH CARD BANK WALLET }
-enum StockType { PURCHASE SALE RETURN ADJUSTMENT PURCHASE_RETURN }
+enum Role {
+ ADMIN
+ CASHIER 
+}
+enum PaymentMethod {
+ CASH
+ CARD
+ BANK
+ WALLET 
+}
+enum StockType {
+ PURCHASE
+ SALE
+ RETURN
+ ADJUSTMENT
+ PURCHASE_RETURN 
+}
 
 model User {
   id Int @id @default(autoincrement())
@@ -186,7 +205,9 @@ model Sale {
   cashier User @relation(fields:[cashierId], references:[id])
   items SaleItem[]
   payments CustomerPayment[]
+  returns Return[]
 }
+
 
 model SaleItem {
   id Int @id @default(autoincrement())
@@ -200,6 +221,7 @@ model SaleItem {
   sale Sale @relation(fields:[saleId], references:[id], onDelete:Cascade)
   medicine Medicine @relation(fields:[medicineId], references:[id])
   batch MedicineBatch @relation(fields:[batchId], references:[id])
+  returns ReturnItem[]
 }
 
 model Return {
